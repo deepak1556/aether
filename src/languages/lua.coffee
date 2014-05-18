@@ -11,9 +11,19 @@ module.exports = class Lua extends Language
   obviouslyCannotTranspile: (rawCode) ->
     false
 
+  wrap: (rawCode, aether) ->
+    @wrappedCodePrefix ?="""
+    function #{aether.options.functionName or 'foo'}(#{aether.options.functionParameters.join(', ')})
+    \n"""
+    @wrappedCodeSuffix ?= "end"
+
+    # Add indentation of 4 spaces to every line
+    indentedCode = ('   ' + line for line in rawCode.split '\n').join '\n'
+
+    @wrappedCodePrefix + indentedCode + @wrappedCodeSuffix
+
   parse: (code, aether) ->
 
-    ast = luapegjs.parse code
-    console.log ast
+    ast = luapegjs.parse code, {locations: true, range: true}
 
     ast

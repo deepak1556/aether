@@ -1,13 +1,18 @@
 Aether = require '../aether'
 
 describe "Lua test Suite!", ->
-  describe "Lua compilation", ->
+  describe "Basic compilation", ->
     aether = new Aether language: "lua"
-    it "Should compile functions", ->
+    it "Should return stuff", ->
       code = """
-        sum = 0
-        while i<5 do
-          sum = sum + i
-        end 
+        return 1000 
       """
       aether.transpile(code)
+      expect(aether.run()).toEqual 1000
+
+    it "Perform arithmetic operations", ->
+      code = "
+        return (2*2 + 2/2 - 2*2/2)
+      "
+      aether.transpile(code)
+      expect(aether.run()).toEqual 3
